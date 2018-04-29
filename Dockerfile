@@ -1,4 +1,4 @@
-FROM dockerregistry.pagero.local/ubuntu-java8:1.23.1-GO
+FROM ubuntu:16.04
 
 MAINTAINER Eranga Bandara (erangaeb@gmail.com)
 
@@ -7,11 +7,22 @@ RUN groupadd -r cassandra --gid=999 && useradd -r -g cassandra --uid=999 cassand
 
 # install required packages
 # install wget/curl
+# python cassandra driver
 RUN apt-get update -y
-RUN apt-get install -y python-software-properties
+RUN apt-get install -y python python-pip python-software-properties
 RUN apt-get install -y software-properties-common
 RUN apt-get install -y curl
 RUN apt-get install -y wget
+RUN pip install cassandra-driver
+
+# install java
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+RUN add-apt-repository -y ppa:webupd8team/java
+RUN apt-get update -y
+RUN apt-get install -y oracle-java8-installer
+RUN rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/cache/oracle-jdk8-installer
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 # install elassandra
 ENV ELASSANDRA_VERSION 5.5.0.14
