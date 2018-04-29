@@ -32,6 +32,6 @@ mkdir -p /var/log/cassandra
 chown -R cassandra:cassandra /var/log/cassandra
 chmod -R 775 /var/log/cassandra
 
-etcd-watch.sh > /dev/null 2>&1 &
+#etcd-watch.sh > /dev/null 2>&1 &
 
 exec /opt/elassandra/bin/cassandra -e -f

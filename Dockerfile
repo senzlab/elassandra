@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM dockerregistry.pagero.local/ubuntu-java8:1.23.1-GO
 
 MAINTAINER Eranga Bandara (erangaeb@gmail.com)
 
@@ -9,17 +9,6 @@ RUN groupadd -r cassandra --gid=999 && useradd -r -g cassandra --uid=999 cassand
 RUN apt-get update -y
 RUN apt-get install -y python-software-properties
 RUN apt-get install -y software-properties-common
-
-# install java
-RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
-RUN add-apt-repository -y ppa:webupd8team/java
-RUN apt-get update -y
-RUN apt-get install -y oracle-java8-installer
-RUN rm -rf /var/lib/apt/lists/*
-RUN rm -rf /var/cache/oracle-jdk8-installer
-
-# set JAVA_HOME
-ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 # install wget
 RUN apt-get update && apt-get install -y wget
