@@ -3,7 +3,6 @@
 declare -r ETCD_HOST=${ETCD_HOST:-"172.17.42.1"}
 declare -r ETCD_URL=http://${ETCD_HOST}:4001/v2/keys/instances/${INSTANCE_ID}/running
 
-declare -r CHECK_URL=localhost:9042
 declare -r LOG_DIR=/var/log/cassandra
 declare -r TTL=30
 declare -r TTL_LIMIT=5
@@ -22,11 +21,10 @@ declare SLEEP_END=0
 while true; do
     # Check status
     CHECK_START=$(date +%s)
-    curl -f -s -m 1 ${CHECK_URL} > /dev/null
-    RET_VAL=$?
     CHECK_END=$(date +%s)
 
-    if [ ${RET_VAL} -eq 28 ]; then
+    mode=$(/opt/elassandra/bin/nodetool netstats | grep 'Mode')
+    if [[ $mode == *"NORMAL"* ]]; then
         # Update running state in etcd
         PUT_START=$(date +%s)
         REMAINING_TTL=$(curl ${ETCD_URL} -s -XPUT -d value=true -d ttl=${TTL} | jq '.prevNode.ttl // -99')
@@ -42,7 +40,7 @@ while true; do
     else
         # Sleep after failure
         SLEEP_START=$(date +%s)
-        sleep ${FAILURE_SLEEP}
+        sleep r{FAILURE_SLEEP}
         SLEEP_END=$(date +%s)
     fi
 done
