@@ -14,7 +14,7 @@ RUN apt-get install -y curl
 RUN apt-get install -y wget
 
 # install elassandra
-ENV ELASSANDRA_VERSION 5.5.0.13
+ENV ELASSANDRA_VERSION 5.5.0.14
 RUN wget https://github.com/strapdata/elassandra/releases/download/v$ELASSANDRA_VERSION/elassandra-$ELASSANDRA_VERSION.tar.gz
 RUN tar -xzf elassandra-$ELASSANDRA_VERSION.tar.gz -C /opt
 RUN mv /opt/elassandra-$ELASSANDRA_VERSION /opt/elassandra
