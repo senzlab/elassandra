@@ -21,23 +21,25 @@ RUN rm -rf /var/cache/oracle-jdk8-installer
 # set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
-# install curl
-RUN apt-get update && apt-get install -y curl
+# install wget
 RUN apt-get update && apt-get install -y wget
 
 # install elassandra
-RUN wget https://github.com/strapdata/elassandra/releases/download/v5.5.0.4/elassandra-5.5.0.4.tar.gz
-RUN tar -xzf elassandra-5.5.0.4.tar.gz -C /opt
-RUN mv /opt/elassandra-5.5.0.4 /opt/elassandra
-RUN rm elassandra-5.5.0.4.tar.gz
-
-WORKDIR /opt/elassandra
+ENV ELASSANDRA_VERSION 5.5.0.13
+RUN wget https://github.com/strapdata/elassandra/releases/download/v$ELASSANDRA_VERSION/elassandra-$ELASSANDRA_VERSION.tar.gz
+RUN tar -xzf elassandra-$ELASSANDRA_VERSION.tar.gz -C /opt
+RUN mv /opt/elassandra-$ELASSANDRA_VERSION /opt/elassandra
+RUN rm elassandra-$ELASSANDRA_VERSION.tar.gz
 
 # post installation config
 ADD configure.sh /opt/elassandra
 ADD start.sh /opt/elassandra
+ADD etcd-watch.sh /opt/elassandra
+ADD schema.cql /opt/elassandra
 RUN chmod +x /opt/elassandra/configure.sh
 RUN chmod +x /opt/elassandra/start.sh
+RUN chmod +x /opt/elassandra/etcd-watch.sh
+RUN chmod +x /opt/elassandra/schema.cql
 RUN /opt/elassandra/configure.sh
 
 # start
@@ -46,6 +48,4 @@ USER cassandra
 
 # 7000: ipc; 7001: tls ipc; 7199: jmx; 9042: cql; 9160: thrift, 9200|9300: elasticsearch
 EXPOSE 7000 7001 7199 9042 9160 9200 9300
-
-#CMD ["/opt/elassandra/bin/cassandra", "-e", "-f"]
 ENTRYPOINT ["/opt/elassandra/start.sh"]
