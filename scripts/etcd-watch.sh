@@ -19,10 +19,9 @@ declare SLEEP_START=0
 declare SLEEP_END=0
 
 while true; do
-    # Check status
+    # check status with nodetool
     CHECK_START=$(date +%s)
     CHECK_END=$(date +%s)
-
     mode=$(/opt/elassandra/bin/nodetool netstats | grep 'Mode')
     if [[ $mode == *"NORMAL"* ]]; then
         # Update running state in etcd
