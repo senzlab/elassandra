@@ -1,28 +1,37 @@
 #!/bin/bash
-echo "Start cassandra..."
+echo "start cassandra..."
 
 /opt/elassandra/bin/cassandra
 
 sleep 60
 
-echo "Create schemas..."
+echo "create schemas..."
 
 # create schema
 IP=`hostname --ip-address`
 PORT=9042
 /opt/elassandra/bin/cqlsh "$IP" "$PORT" -f /opt/elassandra/schema.cql
 
-echo "Done create schemas, stop cassandra..."
+echo "done create schema..."
 
 sleep 5
 
 # create elastic index
+
+echo "stop cassandra..."
 
 # kill cassandra
 pkill -f cassandra
 
 sleep 5
 
-echo "Start elassandra..."
+echo "start etcd watcher..."
+echo "start elassandra..."
 
-/opt/elassandra/bin/cassandra -e -f
+mkdir -p /var/log/cassandra
+chown -R cassandra:cassandra /var/log/cassandra
+chmod -R 775 /var/log/cassandra
+
+etcd-watch.sh > /dev/null 2>&1 &
+
+exec /opt/elassandra/bin/cassandra -e -f
