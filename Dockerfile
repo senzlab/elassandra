@@ -31,9 +31,16 @@ RUN tar -xzf elassandra-$ELASSANDRA_VERSION.tar.gz -C /opt
 RUN mv /opt/elassandra-$ELASSANDRA_VERSION /opt/elassandra
 RUN rm elassandra-$ELASSANDRA_VERSION.tar.gz
 
-# configure cassandra
+# scripts/dirs
 ADD scripts /usr/local/bin/
-RUN /usr/local/bin/configure.sh
+RUN mkdir -p /var/log/cassandra
+RUN chown -R cassandra:cassandra /var/log/cassandra
+RUN chmod -R 775 /var/log/cassandra
+RUN chown -R cassandra:cassandra /opt/elassandra
+RUN chown -R cassandra:cassandra /usr/local/bin
+
+# now user is cassandra
+USER cassandra
 
 # 7000: ipc; 7001: tls ipc; 7199: jmx; 9042: cql; 9160: thrift; 9200|9300: elasticsearch
 EXPOSE 7000 7001 7199 9042 9160 9200 9300
