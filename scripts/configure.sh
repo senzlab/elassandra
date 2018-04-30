@@ -2,7 +2,7 @@
 CASSANDRA_HOME=/opt/elassandra
 
 CASSANDRA_HOST=`hostname --ip-address`
-CLUSTER_NAME="dstorage"
+CLUSTER_NAME="cchain"
 WRITE_TIME_OUT=20000
 
 sed -ri 's/^(# )?('"cluster_name"':).*/\2 '"$CLUSTER_NAME"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
