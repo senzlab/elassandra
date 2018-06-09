@@ -3,7 +3,7 @@
 ## build
 
 ```
-docker build erangaeb/elassandra:1.0 .
+docker build --tag erangaeb/elassandra:1.0 .
 ```
 
 ## run
